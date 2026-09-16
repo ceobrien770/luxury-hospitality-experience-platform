@@ -25,6 +25,9 @@ const twMerge = extendTailwindMerge({
           ],
         },
       ],
+      // Custom utility from globals.css; without this it would be read as a
+      // text colour and removed whenever a colour class is merged in.
+      "text-wrap": [{ text: ["balance-safe"] }],
     },
   },
 });
