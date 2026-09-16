@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   typedRoutes: false,
 
+  experimental: {
+    optimizePackageImports: ["gsap", "motion"],
+  },
+
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

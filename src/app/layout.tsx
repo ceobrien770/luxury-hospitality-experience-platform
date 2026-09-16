@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { MotionProvider } from "@/components/motion/motion-provider";
+import { SmoothScrollProvider } from "@/components/motion/smooth-scroll-provider";
 import { absoluteUrl, siteConfig } from "@/lib/site/config";
 import { cormorant, interTight } from "./fonts";
 import "./globals.css";
@@ -23,7 +25,17 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${cormorant.variable} ${interTight.variable}`}>
-      <body>{children}</body>
+      <body>
+        <a
+          href="#main"
+          className="eyebrow fixed top-4 left-4 z-[100] -translate-y-24 rounded-full bg-ink px-5 py-3 text-ivory transition-transform focus:translate-y-0"
+        >
+          Skip to content
+        </a>
+        <MotionProvider>
+          <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        </MotionProvider>
+      </body>
     </html>
   );
 }

@@ -201,3 +201,41 @@
     @slot;
   }
 }
+
+/*
+ * Reveal-on-scroll states (see components/motion/reveal.tsx).
+ * Elements are only hidden when scripting is available, so content is never
+ * lost if JavaScript fails to load.
+ */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    transition:
+      opacity 1.1s var(--ease-out-quart),
+      transform 1.4s var(--ease-out-expo),
+      clip-path 1.4s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal="fade-up"]:not([data-revealed]) {
+    opacity: 0;
+    transform: translate3d(0, 2.5rem, 0);
+  }
+
+  [data-reveal="fade"]:not([data-revealed]) {
+    opacity: 0;
+  }
+
+  [data-reveal="clip-up"]:not([data-revealed]) {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  [data-reveal="scale-in"]:not([data-revealed]) {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+
+  /* SplitText headings stay invisible until lines are split and positioned. */
+  [data-split-reveal]:not([data-split-ready]) {
+    visibility: hidden;
+  }
+}
