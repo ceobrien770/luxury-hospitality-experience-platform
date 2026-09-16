@@ -10,6 +10,7 @@ const TRANSFORMING_HOSTS = new Set(["images.unsplash.com", "cdn.sanity.io"]);
  * width is rejected, so requests snap up to the nearest supported step.
  */
 const WIKIMEDIA_WIDTHS = [500, 960, 1280, 1920, 3840];
+const WIKIMEDIA_HOSTS = new Set(["upload.wikimedia.org", "thumb.wikimedia.org"]);
 
 function wikimediaThumbnail(url: URL, width: number) {
   const step = WIKIMEDIA_WIDTHS.find((candidate) => candidate >= width) ?? 3840;
@@ -41,7 +42,7 @@ export default function cdnImageLoader({ src, width, quality }: ImageLoaderProps
     return url.toString();
   }
 
-  if (url.hostname === "upload.wikimedia.org" && /\/\d+px-/.test(url.pathname)) {
+  if (WIKIMEDIA_HOSTS.has(url.hostname) && /\/\d+px-/.test(url.pathname)) {
     return wikimediaThumbnail(url, width);
   }
 
