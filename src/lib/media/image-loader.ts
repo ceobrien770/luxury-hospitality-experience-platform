@@ -6,6 +6,19 @@ import type { ImageLoaderProps } from "next/image";
 const TRANSFORMING_HOSTS = new Set(["images.unsplash.com", "cdn.sanity.io"]);
 
 /**
+ * Wikimedia Commons only renders thumbnails at a fixed set of widths; any other
+ * width is rejected, so requests snap up to the nearest supported step.
+ */
+const WIKIMEDIA_WIDTHS = [500, 960, 1280, 1920, 3840];
+
+function wikimediaThumbnail(url: URL, width: number) {
+  const step = WIKIMEDIA_WIDTHS.find((candidate) => candidate >= width) ?? 3840;
+  url.pathname = url.pathname.replace(/\/\d+px-/, `/${step}px-`);
+  url.search = "";
+  return url.toString();
+}
+
+/**
  * Global next/image loader (configured in next.config.ts).
  *
  * Unsplash (imgix) and the Sanity image CDN resize, re-encode to AVIF/WebP and
@@ -28,8 +41,11 @@ export default function cdnImageLoader({ src, width, quality }: ImageLoaderProps
     return url.toString();
   }
 
-  // Hosts without transforms (e.g. Wikimedia thumbnails): keep the URL, add the
-  // width as a cache-distinguishing hint so srcset entries stay unique.
+  if (url.hostname === "upload.wikimedia.org" && /\/\d+px-/.test(url.pathname)) {
+    return wikimediaThumbnail(url, width);
+  }
+
+  // Unknown hosts: keep the original, adding the width so srcset entries stay unique.
   url.searchParams.set("w", String(width));
   return url.toString();
 }
